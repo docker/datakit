@@ -49,7 +49,10 @@ end
 
 module Wm = struct
   module Rd = Webmachine.Rd
-  include Webmachine.Make(Cohttp_lwt_unix.IO)
+  module UnixClock = struct
+    let now = fun () -> int_of_float (Unix.gettimeofday ())
+  end
+  include Webmachine.Make(Cohttp_lwt_unix.IO)(UnixClock)
 end
 module Session = struct
   module Memory = Session.Lift.IO(Lwt)(Session.Memory)
